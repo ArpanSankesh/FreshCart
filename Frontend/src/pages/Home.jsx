@@ -1,7 +1,8 @@
-import React from 'react'
+
 import HeroBanner from '../components/HeroBanner'
 import Categories from '../components/Categories'
 import BestSeller from '../components/BestSeller'
+import { BottomBanner } from '../components/BottomBanner'
 
 const Home = () => {
   return (
@@ -9,6 +10,7 @@ const Home = () => {
         <HeroBanner/>
         <Categories/>
         <BestSeller/>
+        <BottomBanner/>
     </div>
   )
 }
