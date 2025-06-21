@@ -17,6 +17,7 @@ const Navbar = () => {
         if (searchQuery.length > 0) {
             navigate("/products")
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchQuery])
 
     return (
@@ -49,7 +50,7 @@ const Navbar = () => {
                     <div className='relative group'>
                         <img src={assets.profile_icon} className='w-10' alt="" />
                         <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded-md text-sm z-40'>
-                            <li onClick={() => { navigate('my-orders') }} className='p-1.5 pl-3 hover:bg-primary-dull/10 cursor-pointer'>My Products</li>
+                            <li onClick={() => { navigate('my-orders') }} className='p-1.5 pl-3 hover:bg-primary-dull/10 cursor-pointer'>My Orders</li>
                             <li onClick={logout} className='p-1.5 pl-3 hover:bg-primary-dull/10 cursor-pointer'>Logout</li>
                         </ul>
                     </div>
@@ -70,11 +71,11 @@ const Navbar = () => {
 
             {/* Mobile Menu */}
             {open && (
-                <div className={`${open ? 'flex' : 'hidden'} absolute top-[60px] left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden`}>
+                <div className={`${open ? 'flex' : 'hidden'} absolute top-[60px] left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden z-10`}>
                     <NavLink to={"/home"} onClick={() => setOpen(false)}>Home</NavLink>
                     <NavLink to={"/products"} onClick={() => setOpen(false)}>All Products</NavLink>
                     {user &&
-                        <NavLink to={"/Contact"} onClick={() => setOpen(false)}>My Products</NavLink>
+                        <NavLink to={"/Contact"} onClick={() => setOpen(false)}>My Orders</NavLink>
                     }
                     {!user ? (
                         <button onClick={() => {

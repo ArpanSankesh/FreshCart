@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { dummyProducts } from "../assets/assets";
 import { toast } from "react-hot-toast";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
@@ -89,6 +90,7 @@ export const AppContextProvider = ({ children }) => {
     </AppContext.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAppContext = () => {
     return useContext(AppContext)
 }
