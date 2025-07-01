@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import connectToDB from './config/db.js';
 import 'dotenv/config'
+import userRouter from './routes/userRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 4000
@@ -17,9 +18,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({origin : allowedOrigin, credentials : true}))
 
-app.get('/', (req, res) => {
-    res.send("API IS WORKING")
-})
+app.get('/', (req, res) => {res.send("API IS WORKING")})
+app.use('/api/user', userRouter)
 
 app.listen(port, () => {
     console.log(`SERVER IS RUNNING ON http://localhost:${port}`);

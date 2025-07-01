@@ -18,7 +18,7 @@ export const register = async (req, res) => {
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
-    const user = User.create({ name, email, password: hashPassword });
+    const user = await User.create({ name, email, password: hashPassword });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -31,7 +31,7 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.json({ success: ture, user: {email: user.email, name: user.name}});
+    return res.json({ success: true, user: {email: user.email, name: user.name}});
 
   } catch (error) {
 console.log(error.message);
