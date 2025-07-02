@@ -13,8 +13,7 @@ const {sellerToken} = req.cookies;
                 next();
             } else {
                 return res.json({success: false, message: "Unauthorized"})
-            }
-            next();
+            } 
         } catch (error) {
             res.json({success: false, message: error.message})
         }
