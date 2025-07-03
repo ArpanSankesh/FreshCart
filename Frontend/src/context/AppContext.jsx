@@ -1,8 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom'
-import { dummyProducts } from "../assets/assets";
 import { toast } from "react-hot-toast";
+import axios from "axios"
 
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
 
@@ -18,9 +20,44 @@ export const AppContextProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState({});
 
+    const fetchSeller = async () => {
+        try {
+            const { data } = await axios.get('/api/seller/is-auth')
+            if(data.success){
+                setIsSeller(true)
+            }else{
+                setIsSeller(false)
+            }
+        // eslint-disable-next-line no-unused-vars
+        } catch (e) {
+            setIsSeller(false)
+        }
+    }
+    
+    const fetchUser = async () => {
+        try {
+            const { data } = await axios.get('/api/user/is-auth')
+            if(data.success){
+                setUser(data.user)
+                setCartItems(data.user.cartItems)
+            }
+        // eslint-disable-next-line no-unused-vars
+        } catch (e) {
+            setUser(null)
+        }
+    }
 
     const fetchProducts = async () => {
-        setProducts(dummyProducts)
+        try {
+            const { data } = await axios.get('/api/product/list')
+            if(data.success){
+                setProducts(data.products)
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
     }
 
     // Add items to Cart
@@ -79,11 +116,32 @@ export const AppContextProvider = ({ children }) => {
     }
 
     useEffect(() => {
+        fetchUser()
+        fetchSeller()
         fetchProducts();
     }, [])
 
+    useEffect(() => {
+        const updateCart = async () => {
+            try {
+                const { data } = await axios.post('/api/cart/update', {
+                userId: user._id,       
+                cartItems               
+            })
+                if(!data.success){
+                    toast.error(data.message)
+                }
+            } catch (error) {
+                toast.error(error.message)
+            }
+        }
+        if(user){
+            updateCart()
+        }
+    }, [cartItems])
+
     const value = { navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products, currency, addToCart, updateCartItems, 
-        removeFromCart, cartItems, searchQuery, setSearchQuery, getCartAmount, getCartCount
+        removeFromCart, cartItems, searchQuery, setSearchQuery, getCartAmount, getCartCount, axios, fetchProducts
      };
     return <AppContext.Provider value={value}>
         {children}

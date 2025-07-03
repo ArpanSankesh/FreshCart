@@ -8,7 +8,7 @@ const Cart = () => {
     const [cartArray, setCartArray] = useState([])
     const [address, setAddress] = useState(dummyAddress)
     const [ShowAddress, setShowAddress] = useState(false)
-    const [selectAddress, setSelectAddress] = useState(dummyAddress)
+    const [selectAddress, setSelectAddress] = useState(dummyAddress[0])
     const [paymentOption, setPaymentOption] = useState('COD')
 
     const getCart = () => {
