@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react"
 import { useAppContext } from "../context/AppContext"
-import { assets, dummyAddress } from "../assets/assets";
+import { assets } from "../assets/assets";
+import toast from "react-hot-toast";
 
 const Cart = () => {
 
-    const { products, currency, cartItems, removeFromCart, getCartCount, updateCartItems, navigate, getCartAmount } = useAppContext();
+    const { products, currency, cartItems, removeFromCart, getCartCount, updateCartItems, navigate, getCartAmount, axios, user, setCartItems } = useAppContext();
     const [cartArray, setCartArray] = useState([])
-    const [address, setAddress] = useState(dummyAddress)
+    const [addresses, setAddresses] = useState([])
     const [ShowAddress, setShowAddress] = useState(false)
-    const [selectAddress, setSelectAddress] = useState(dummyAddress[0])
+    const [selectAddress, setSelectAddress] = useState(null)
     const [paymentOption, setPaymentOption] = useState('COD')
 
     const getCart = () => {
@@ -21,12 +22,65 @@ const Cart = () => {
         setCartArray(tempArray)
     }
 
+    const getUserAddress = async () => {
+        try {
+            const { data } = await axios.get('/api/address/get')
+            if (data.success) {
+                setAddresses(data.addresses)
+                console.log(data.addresses);
+                if(data.addresses.length > 0){
+                    setSelectAddress(data.addresses[0])
+                }else{
+                    toast.error(data.error)
+                }
+            }
+        } catch (error) {
+            toast.error(error.message)
+            
+        }
+    }
+
+    const placeOrder = async () => {
+        try {
+            if(!selectAddress){
+                return toast.error("Please select an address")
+            }
+
+            // COD
+            if(paymentOption == "COD"){
+                const { data } = await axios.post('/api/order/cod', {
+                    userId : user._id,
+                    items: cartArray.map(item => ({product: item._id, quantity: item.quantity})),
+                    address: selectAddress._id
+                })
+                if(data.success){
+                    toast.success(data.message)
+                    setCartItems({})
+                    navigate('/my-orders')
+                }else{
+                    toast.error(data.message)
+                }
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
     useEffect(() => {
         if (products.length > 0 && cartItems) {
             getCart()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [products, cartItems])
+
+   useEffect(() => {
+    const fetchData = async () => {
+        await getUserAddress();
+    };
+    if (user) {
+        fetchData();
+    }
+}, [user]);
 
 
     return products.length > 0 && cartItems ? (
@@ -90,8 +144,8 @@ const Cart = () => {
                         </button>
                         {ShowAddress && (
                             <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
-                                {address.map((address, index) => (
-                                <p onClick={() => {setSelectAddress(address); setShowAddress(false)}} className="text-gray-500 p-2 hover:bg-gray-100">
+                                {addresses.map((address, index) => (
+                                <p key={index} onClick={() => {setSelectAddress(address); setShowAddress(false)}} className="text-gray-500 p-2 hover:bg-gray-100">
                                         {address.street}, {address.city},{address.state},{address.country},
                                     </p>
                                 ))}
@@ -127,7 +181,7 @@ const Cart = () => {
                     </p>
                 </div>
 
-                <button  className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition">
+                <button onClick={placeOrder} className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition">
                     {paymentOption === "COD" ? "Place Order" : "Proceed to Checkout"}
                 </button>
             </div>

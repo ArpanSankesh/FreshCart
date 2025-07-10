@@ -118,7 +118,7 @@ export const AppContextProvider = ({ children }) => {
     useEffect(() => {
         fetchUser()
         fetchSeller()
-        fetchProducts();
+        fetchProducts();        
     }, [])
 
     useEffect(() => {
@@ -141,7 +141,7 @@ export const AppContextProvider = ({ children }) => {
     }, [cartItems])
 
     const value = { navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products, currency, addToCart, updateCartItems, 
-        removeFromCart, cartItems, searchQuery, setSearchQuery, getCartAmount, getCartCount, axios, fetchProducts
+        removeFromCart, cartItems, searchQuery, setSearchQuery, getCartAmount, getCartCount, axios, fetchProducts, setCartItems
      };
     return <AppContext.Provider value={value}>
         {children}
