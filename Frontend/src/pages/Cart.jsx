@@ -28,36 +28,35 @@ const Cart = () => {
             if (data.success) {
                 setAddresses(data.addresses)
                 console.log(data.addresses);
-                if(data.addresses.length > 0){
+                if (data.addresses.length > 0) {
                     setSelectAddress(data.addresses[0])
-                }else{
+                } else {
                     toast.error(data.error)
                 }
             }
         } catch (error) {
             toast.error(error.message)
-            
+
         }
     }
 
     const placeOrder = async () => {
         try {
-            if(!selectAddress){
+            if (!selectAddress) {
                 return toast.error("Please select an address")
             }
-
             // COD
-            if(paymentOption == "COD"){
+            if (paymentOption == "COD") {
                 const { data } = await axios.post('/api/order/cod', {
-                    userId : user._id,
-                    items: cartArray.map(item => ({product: item._id, quantity: item.quantity})),
+                   
+                    items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
                     address: selectAddress._id
                 })
-                if(data.success){
+                if (data.success) {
                     toast.success(data.message)
                     setCartItems({})
                     navigate('/my-orders')
-                }else{
+                } else {
                     toast.error(data.message)
                 }
             }
@@ -73,14 +72,14 @@ const Cart = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [products, cartItems])
 
-   useEffect(() => {
-    const fetchData = async () => {
-        await getUserAddress();
-    };
-    if (user) {
-        fetchData();
-    }
-}, [user]);
+    useEffect(() => {
+        const fetchData = async () => {
+            await getUserAddress();
+        };
+        if (user) {
+            fetchData();
+        }
+    }, [user]);
 
 
     return products.length > 0 && cartItems ? (
@@ -108,7 +107,7 @@ const Cart = () => {
                                     <p>Weight: <span>{product.weight || "N/A"}</span></p>
                                     <div className='flex items-center'>
                                         <p>Qty:</p>
-                                        <select onChange={(e)=> updateCartItems(product._id, Number(e.target.value))} value={cartItems[product._id]} className='outline-none'>
+                                        <select onChange={(e) => updateCartItems(product._id, Number(e.target.value))} value={cartItems[product._id]} className='outline-none'>
                                             {Array(cartItems[product._id] > 9 ? cartItems[product._id] : 9).fill('').map((_, index) => (
                                                 <option key={index} value={index + 1}>{index + 1}</option>
                                             ))}
@@ -145,7 +144,7 @@ const Cart = () => {
                         {ShowAddress && (
                             <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
                                 {addresses.map((address, index) => (
-                                <p key={index} onClick={() => {setSelectAddress(address); setShowAddress(false)}} className="text-gray-500 p-2 hover:bg-gray-100">
+                                    <p key={index} onClick={() => { setSelectAddress(address); setShowAddress(false) }} className="text-gray-500 p-2 hover:bg-gray-100">
                                         {address.street}, {address.city},{address.state},{address.country},
                                     </p>
                                 ))}
@@ -158,7 +157,7 @@ const Cart = () => {
 
                     <p className="text-sm font-medium uppercase mt-6">Payment Method</p>
 
-                    <select onChange={(e)=> setPaymentOption(e.target.value)} className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none">
+                    <select onChange={(e) => setPaymentOption(e.target.value)} className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none">
                         <option value="COD">Cash On Delivery</option>
                         <option value="Online">Online Payment</option>
                     </select>
