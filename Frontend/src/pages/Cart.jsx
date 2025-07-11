@@ -48,7 +48,7 @@ const Cart = () => {
             // COD
             if (paymentOption == "COD") {
                 const { data } = await axios.post('/api/order/cod', {
-                   
+
                     items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
                     address: selectAddress._id
                 })
@@ -59,6 +59,20 @@ const Cart = () => {
                 } else {
                     toast.error(data.message)
                 }
+            } else {
+                const { data } = await axios.post('/api/order/stripe', {
+                    items: cartArray.map(item => ({ product: item._id, quantity: item.quantity })),
+                    address: selectAddress._id, 
+                    headers: {
+                        origin: window.location.origin
+                    }
+                })
+                if (data.success) {
+                    window.location.replace(data.url)
+                } else {
+                    toast.error(data.message)
+                }
+
             }
         } catch (error) {
             toast.error(error.message)
